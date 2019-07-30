@@ -5,5 +5,10 @@
         <attr name="layout_shadowY" format="dimension|reference" />
         <attr name="layout_shadowRadius" format="dimension|reference" />
         <attr name="layout_shadowColor" format="color|reference" />
+        <attr name="layout_roundRadius" format="dimension|reference" />
+        <attr name="layout_roundRadiusLT" format="dimension|reference" />
+        <attr name="layout_roundRadiusRT" format="dimension|reference" />
+        <attr name="layout_roundRadiusRB" format="dimension|reference" />
+        <attr name="layout_roundRadiusLB" format="dimension|reference" />
     </declare-styleable>
 </resources>

@@ -29,6 +29,15 @@ public class ShadowLayout extends FrameLayout {
             }
             return null;
         }
+
+        @Override
+        public float[] getRoundRadius(@NonNull ViewGroup parent, @NonNull View child) {
+            LayoutParams lp = (LayoutParams) child.getLayoutParams();
+            if (null != lp) {
+                return lp.roundRadius;
+            }
+            return null;
+        }
     };
 
     public ShadowLayout(@NonNull Context context) {
@@ -125,6 +134,7 @@ public class ShadowLayout extends FrameLayout {
     public static class LayoutParams extends FrameLayout.LayoutParams {
 
         public final ShadowInfo shadowInfo = new ShadowInfo();
+        private float[] roundRadius;
 
         public LayoutParams(@NonNull Context c, @Nullable AttributeSet attrs) {
             super(c, attrs);
@@ -133,6 +143,19 @@ public class ShadowLayout extends FrameLayout {
             shadowInfo.setShadowY(ta.getDimension(R.styleable.ShadowLayout_Layout_layout_shadowY, 0f));
             shadowInfo.setShadowRadius(ta.getDimension(R.styleable.ShadowLayout_Layout_layout_shadowRadius, 0f));
             shadowInfo.setShadowColor(ta.getColor(R.styleable.ShadowLayout_Layout_layout_shadowColor, Color.BLACK));
+            float round = ta.getDimension(R.styleable.ShadowLayout_Layout_layout_roundRadius, 0f);
+            float roundLT = ta.getDimension(R.styleable.ShadowLayout_Layout_layout_roundRadiusLT, round);
+            float roundRT = ta.getDimension(R.styleable.ShadowLayout_Layout_layout_roundRadiusRT, round);
+            float roundRB = ta.getDimension(R.styleable.ShadowLayout_Layout_layout_roundRadiusRB, round);
+            float roundLB = ta.getDimension(R.styleable.ShadowLayout_Layout_layout_roundRadiusLB, round);
+            if (roundLT > 0 || roundRT > 0 || roundRB > 0 || roundLB > 0) {
+                roundRadius = new float[]{
+                        roundLT, roundLT,
+                        roundRT, roundRT,
+                        roundRB, roundRB,
+                        roundLB, roundLB,
+                };
+            }
             ta.recycle();
         }
 
@@ -154,6 +177,18 @@ public class ShadowLayout extends FrameLayout {
 
         public LayoutParams(@NonNull FrameLayout.LayoutParams source) {
             super(source);
+        }
+
+        @Nullable
+        public float[] getRoundRadius() {
+            return roundRadius;
+        }
+
+        public void setRoundRadius(@Nullable float[] roundRadius) {
+            if (null != roundRadius && roundRadius.length != 8) {
+                throw new IllegalArgumentException("round radius length must be 8");
+            }
+            this.roundRadius = roundRadius;
         }
     }
 }

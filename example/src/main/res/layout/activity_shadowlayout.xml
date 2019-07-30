@@ -19,6 +19,7 @@
         android:transformPivotY="50dp"
         android:translationX="40dp"
         android:translationY="20dp"
+        app:layout_roundRadius="10dp"
         app:layout_shadowColor="#ffff00"
         app:layout_shadowRadius="10dp"
         app:layout_shadowX="-5dp" />
@@ -29,7 +30,11 @@
         android:layout_gravity="right|bottom"
         android:layout_marginRight="50dp"
         android:layout_marginBottom="20dp"
-        android:background="#00ff00"
+        android:background="@drawable/shape_bg"
+        app:layout_roundRadiusLB="5dp"
+        app:layout_roundRadiusLT="20dp"
+        app:layout_roundRadiusRB="15dp"
+        app:layout_roundRadiusRT="10dp"
         app:layout_shadowColor="#000000"
         app:layout_shadowRadius="10dp" />
 </com.mosect.ashadow.ShadowLayout>
