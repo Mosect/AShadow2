@@ -12,10 +12,12 @@ public class ShadowInfo {
     private float shadowX; // 阴影X轴偏移量
     private float shadowY; // 阴影Y轴偏移量
     private int shadowColor; // 阴影颜色
+    private int solidColor; // 填充颜色
     private Paint paint; // 阴影画笔
 
     public ShadowInfo() {
         shadowColor = Color.BLACK;
+        solidColor = Color.BLACK;
         paint = new Paint();
         updatePaint();
     }
@@ -56,6 +58,15 @@ public class ShadowInfo {
         updatePaint();
     }
 
+    public void setSolidColor(int solidColor) {
+        this.solidColor = solidColor;
+        updatePaint();
+    }
+
+    public int getSolidColor() {
+        return solidColor;
+    }
+
     public Paint getPaint() {
         return paint;
     }
@@ -64,7 +75,7 @@ public class ShadowInfo {
         paint.reset();
         paint.setAntiAlias(true);
         paint.setShadowLayer(shadowRadius, shadowX, shadowY, shadowColor);
-        paint.setColor(Color.BLACK);
+        paint.setColor(solidColor);
         paint.setStyle(Paint.Style.FILL);
     }
 }

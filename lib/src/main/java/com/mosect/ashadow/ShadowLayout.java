@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Path;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,6 +38,15 @@ public class ShadowLayout extends FrameLayout {
                 return lp.roundRadius;
             }
             return null;
+        }
+
+        @Override
+        protected Path getClipPath(@NonNull ViewGroup parent, @NonNull View child) {
+            LayoutParams lp = (LayoutParams) child.getLayoutParams();
+            if (null != lp && !lp.clipShadow) {
+                return null;
+            }
+            return super.getClipPath(parent, child);
         }
     };
 
@@ -87,8 +97,9 @@ public class ShadowLayout extends FrameLayout {
             View child = getChildAt(i);
             if (child.getVisibility() == GONE) continue;
             LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            int hmar = (int) (lp.leftMargin + lp.rightMargin + lp.shadowInfo.getShadowRadius() * 2);
-            int vmar = (int) (lp.topMargin + lp.bottomMargin + lp.shadowInfo.getShadowRadius() * 2);
+            float shadowRadius = lp.spaceShadow ? lp.shadowInfo.getShadowRadius() : 0f;
+            int hmar = (int) (lp.leftMargin + lp.rightMargin + shadowRadius * 2);
+            int vmar = (int) (lp.topMargin + lp.bottomMargin + shadowRadius * 2);
             int ws = MeasureUtils.makeChildMeasureSpec(cws, lp.width, hmar);
             int hs = MeasureUtils.makeChildMeasureSpec(chs, lp.height, vmar);
             child.measure(ws, hs);
@@ -109,16 +120,20 @@ public class ShadowLayout extends FrameLayout {
             View child = getChildAt(i);
             if (child.getVisibility() == GONE) continue;
             LayoutParams lp = (LayoutParams) child.getLayoutParams();
+            float shadowRadius = 0f, shadowX = 0f, shadowY = 0f;
+            if (lp.spaceShadow) {
+                shadowRadius = lp.shadowInfo.getShadowRadius();
+                shadowX = lp.shadowInfo.getShadowX();
+                shadowY = lp.shadowInfo.getShadowY();
+            }
             int gravity = lp.gravity == Gravity.NO_GRAVITY ? Gravity.LEFT | Gravity.TOP : lp.gravity;
             int width = (int) (child.getMeasuredWidth() + lp.leftMargin +
-                    lp.rightMargin + lp.shadowInfo.getShadowRadius() * 2);
+                    lp.rightMargin + shadowRadius * 2);
             int height = (int) (child.getMeasuredHeight() + lp.topMargin +
-                    lp.bottomMargin + lp.shadowInfo.getShadowRadius() * 2);
+                    lp.bottomMargin + shadowRadius * 2);
             Gravity.apply(gravity, width, height, layoutContainer, layoutOut);
-            int cl = (int) (layoutOut.left + lp.leftMargin +
-                    lp.shadowInfo.getShadowRadius() + lp.shadowInfo.getShadowX());
-            int ct = (int) (layoutOut.top + lp.topMargin +
-                    lp.shadowInfo.getShadowRadius() + lp.shadowInfo.getShadowY());
+            int cl = (int) (layoutOut.left + lp.leftMargin + shadowRadius + shadowX);
+            int ct = (int) (layoutOut.top + lp.topMargin + shadowRadius + shadowY);
             int cr = cl + child.getMeasuredWidth();
             int cb = ct + child.getMeasuredHeight();
             child.layout(cl, ct, cr, cb);
@@ -133,7 +148,24 @@ public class ShadowLayout extends FrameLayout {
 
     public static class LayoutParams extends FrameLayout.LayoutParams {
 
+        /**
+         * 阴影信息
+         */
         public final ShadowInfo shadowInfo = new ShadowInfo();
+        /**
+         * 是否使用裁剪方式显示阴影，
+         * 如果为true，solidColor属性不生效，视图内容部分留空，但在部分机型会出现问题
+         * 如果为false，solidColor属性生效，会在视图内容部分填充此颜色
+         * 默认为true
+         */
+        public boolean clipShadow = true;
+        /**
+         * 设置阴影是否影响视图位置，默认开启
+         */
+        public boolean spaceShadow = true;
+        /**
+         * 圆角
+         */
         private float[] roundRadius;
 
         public LayoutParams(@NonNull Context c, @Nullable AttributeSet attrs) {
@@ -156,6 +188,9 @@ public class ShadowLayout extends FrameLayout {
                         roundLB, roundLB,
                 };
             }
+            shadowInfo.setSolidColor(ta.getColor(R.styleable.ShadowLayout_Layout_layout_solidColor, Color.BLACK));
+            clipShadow = ta.getBoolean(R.styleable.ShadowLayout_Layout_layout_clipShadow, true);
+            spaceShadow = ta.getBoolean(R.styleable.ShadowLayout_Layout_layout_spaceShadow, true);
             ta.recycle();
         }
 
