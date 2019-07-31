@@ -2,10 +2,21 @@
 Android阴影控件库
 
 ## 使用
-**gihub代码未更新（没有同步），请使用jcenter开源库**
 ```
-implementation 'com.mosect.AShadow:1.0.2'
+implementation 'com.mosect.AShadow:1.0.3'
 ```
+
+## 更新记录
+### 1.0.3
+* 增加spaceShadow属性，控制阴影是否影响视图位置
+### 1.0.2
+* 增加clipShadow属性，控制是否填充视图部分
+* 增加solidColor属性，填充的颜色
+* 增加圆角属性：roundRadius、roundLT、roundRT、roundRB、roundLB
+### 1.0.1
+**此版本有问题，请勿使用**
+### 1.0.0
+* 阴影布局ShadowLayout，其子视图可以设置一个阴影，支持的属性：shadowColor、shadowRadius、shadowX、shadowY
 
 ## XML示例
 ```
@@ -43,9 +54,10 @@ implementation 'com.mosect.AShadow:1.0.2'
 左下角圆角半径 | ShadowLayout.LayoutParams.shadowInfo.setRoundRadius | app:layout_roundLB | dimen
 裁剪阴影 | ShadowLayout.LayoutParams.clipShadow | app:layout_clipShadow | boolean
 填充颜色 | ShadowLayout.LayoutParams.shadowInfo.setSolidColor | app:layout_solidColor | color
+阴影占用空间 | ShadowLayout.LayoutParams.spaceShadow | app:layout_spaceShadow | boolean
 
 ## 说明：
-放到ShadowLayout中的视图都可以设置阴影，阴影半径和偏移量会影响其位置。
+放到ShadowLayout中的视图都可以设置阴影，默认阴影半径和偏移量会影响其位置。可以通过设置spaceShadow控制阴影是否影响视图位置。
 
 **如果开启了clipShadow（默认），内容视图部分不会填充颜色，只会填充其阴影。因为使用了clip，因此在有圆角的阴影中，四个角会出现黑边，可以将solidColor属性设置成和背景一样的颜色，可以解决此问题。**
 
