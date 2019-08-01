@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Path;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,54 +19,71 @@ public class ShadowLayout extends FrameLayout {
 
     private Rect layoutContainer = new Rect();
     private Rect layoutOut = new Rect();
-    private RectChildShadow priChildShadow = new RectChildShadow() {
-        @Nullable
-        @Override
-        protected ShadowInfo getShadowInfo(@NonNull ViewGroup parent, @NonNull View child) {
-            LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            if (null != lp) {
-                return lp.shadowInfo;
-            }
-            return null;
-        }
-
-        @Override
-        public float[] getRoundRadius(@NonNull ViewGroup parent, @NonNull View child) {
-            LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            if (null != lp) {
-                return lp.roundRadius;
-            }
-            return null;
-        }
-
-        @Override
-        protected Path getClipPath(@NonNull ViewGroup parent, @NonNull View child) {
-            LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            if (null != lp && !lp.clipShadow) {
-                return null;
-            }
-            return super.getClipPath(parent, child);
-        }
-    };
+    private FastShadow priChildShadow;
 
     public ShadowLayout(@NonNull Context context) {
         super(context);
-        init();
     }
 
     public ShadowLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
     }
 
     public ShadowLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
     }
 
-    private void init() {
-        // 关闭硬件加速
-        setLayerType(LAYER_TYPE_SOFTWARE, null);
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (null != priChildShadow) {
+            priChildShadow.close();
+        }
+        priChildShadow = new FastShadow() {
+            @Nullable
+            @Override
+            protected ShadowInfo getShadowInfo(@NonNull ViewGroup parent, @NonNull View child) {
+                LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                if (null != lp) {
+                    return lp.shadowInfo;
+                }
+                return null;
+            }
+
+            @Nullable
+            @Override
+            protected Object getChildShadowKey(@NonNull ViewGroup parent, @NonNull View child) {
+                LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                if (null != lp) {
+                    return lp.shadowKey;
+                }
+                return null;
+            }
+
+            @Override
+            public float[] getChildRounds(@NonNull ViewGroup parent, @NonNull View child) {
+                LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                if (null != lp) {
+                    return lp.roundRadius;
+                }
+                return null;
+            }
+
+            @NonNull
+            @Override
+            protected Object copyKey(@NonNull Object key) {
+                return ((ShadowKey) key).clone();
+            }
+        };
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (null != priChildShadow) {
+            priChildShadow.close();
+            priChildShadow = null;
+        }
     }
 
     @Override
@@ -107,6 +123,10 @@ public class ShadowLayout extends FrameLayout {
             int height = child.getMeasuredHeight() + vmar;
             if (width > contentWidth) contentWidth = width;
             if (height > contentHeight) contentHeight = height;
+            if (!lp.shadowKey.equals(width, height, lp.shadowInfo, lp.roundRadius)) {
+                // 阴影发生更改
+                lp.shadowKey.set(width, height, lp.shadowInfo, lp.roundRadius);
+            }
         }
         int width = MeasureUtils.getMeasuredDimension(contentWidth, widthMeasureSpec);
         int height = MeasureUtils.getMeasuredDimension(contentHeight, heightMeasureSpec);
@@ -157,6 +177,8 @@ public class ShadowLayout extends FrameLayout {
          * 如果为true，solidColor属性不生效，视图内容部分留空，但在部分机型会出现问题
          * 如果为false，solidColor属性生效，会在视图内容部分填充此颜色
          * 默认为true
+         *
+         * @deprecated 此属性不再使用
          */
         public boolean clipShadow = true;
         /**
@@ -167,6 +189,7 @@ public class ShadowLayout extends FrameLayout {
          * 圆角
          */
         private float[] roundRadius;
+        ShadowKey shadowKey;
 
         public LayoutParams(@NonNull Context c, @Nullable AttributeSet attrs) {
             super(c, attrs);
@@ -192,26 +215,32 @@ public class ShadowLayout extends FrameLayout {
             clipShadow = ta.getBoolean(R.styleable.ShadowLayout_Layout_layout_clipShadow, true);
             spaceShadow = ta.getBoolean(R.styleable.ShadowLayout_Layout_layout_spaceShadow, true);
             ta.recycle();
+            init();
         }
 
         public LayoutParams(int width, int height) {
             super(width, height);
+            init();
         }
 
         public LayoutParams(int width, int height, int gravity) {
             super(width, height, gravity);
+            init();
         }
 
         public LayoutParams(@NonNull ViewGroup.LayoutParams source) {
             super(source);
+            init();
         }
 
         public LayoutParams(@NonNull ViewGroup.MarginLayoutParams source) {
             super(source);
+            init();
         }
 
         public LayoutParams(@NonNull FrameLayout.LayoutParams source) {
             super(source);
+            init();
         }
 
         @Nullable
@@ -225,5 +254,11 @@ public class ShadowLayout extends FrameLayout {
             }
             this.roundRadius = roundRadius;
         }
+
+        private void init() {
+            shadowKey = new ShadowKey();
+            shadowKey.set(0, 0, shadowInfo, roundRadius);
+        }
     }
+
 }

@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 
-public abstract class RectChildShadow extends ChildShadow {
+public abstract class RectChildShadow extends AbsChildShadow {
 
     private Path shadowPath = new Path();
     private Path childPath = new Path();
