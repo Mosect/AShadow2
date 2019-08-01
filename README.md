@@ -3,10 +3,15 @@ Android阴影控件库
 
 ## 使用
 ```
-implementation 'com.mosect.AShadow:1.0.3'
+implementation 'com.mosect.AShadow:1.0.4'
 ```
 
 ## 更新记录
+### 1.0.4
+* 增加FastShadow，用于快速渲染阴影（渲染速度极大提升）
+* ShadowLayout改用FastShadow
+* 启用clipShadow属性，不再支持，在2.0版本将会移除
+* 不推荐使用RectChildShadow和AbsChildShadow，在2.0版本将会移除
 ### 1.0.3
 * 增加spaceShadow属性，控制阴影是否影响视图位置
 ### 1.0.2
@@ -52,16 +57,67 @@ implementation 'com.mosect.AShadow:1.0.3'
 右上角圆角半径 | ShadowLayout.LayoutParams.shadowInfo.setRoundRadius | app:layout_roundRT | dimen
 右下角圆角半径 | ShadowLayout.LayoutParams.shadowInfo.setRoundRadius | app:layout_roundRB | dimen
 左下角圆角半径 | ShadowLayout.LayoutParams.shadowInfo.setRoundRadius | app:layout_roundLB | dimen
-裁剪阴影 | ShadowLayout.LayoutParams.clipShadow | app:layout_clipShadow | boolean
+裁剪阴影（不再使用） | ShadowLayout.LayoutParams.clipShadow | app:layout_clipShadow | boolean
 填充颜色 | ShadowLayout.LayoutParams.shadowInfo.setSolidColor | app:layout_solidColor | color
 阴影占用空间 | ShadowLayout.LayoutParams.spaceShadow | app:layout_spaceShadow | boolean
 
 ## 说明：
 放到ShadowLayout中的视图都可以设置阴影，默认阴影半径和偏移量会影响其位置。可以通过设置spaceShadow控制阴影是否影响视图位置。
 
-**如果开启了clipShadow（默认），内容视图部分不会填充颜色，只会填充其阴影。因为使用了clip，因此在有圆角的阴影中，四个角会出现黑边，可以将solidColor属性设置成和背景一样的颜色，可以解决此问题。**
+增加FastShadow，用于快速渲染子视图，**不再需要关闭硬件加速**。复写ViewGroup的drawChild方法，并调用FastShadow的drawChild方法：
+```
+    @Override
+    protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
+        priChildShadow.drawChild(canvas, this, child);
+        return super.drawChild(canvas, child, drawingTime);
+    }
+```
+FastShadow是一个抽象类，需要实现部分方法才能使用，例如，ShadowLayout的实现：
+```
+    priChildShadow = new FastShadow() {
+        @Nullable
+        @Override
+        protected ShadowInfo getShadowInfo(@NonNull ViewGroup parent, @NonNull View child) {
+            // 此方法返回子视图的阴影信息
+            LayoutParams lp = (LayoutParams) child.getLayoutParams();
+            if (null != lp) {
+                return lp.shadowInfo;
+            }
+            return null;
+        }
 
-**如果关闭clipShadow属性，内容视图部分会被填充solidColor，solidColor不能含有透明度，否则会出现阴影不显示问题**
+        @Nullable
+        @Override
+        protected Object getChildShadowKey(@NonNull ViewGroup parent, @NonNull View child) {
+            // 此方法返回子视图的阴影对应的key，不同的阴影拥有不同的key，推荐使用ShadowKey类
+            LayoutParams lp = (LayoutParams) child.getLayoutParams();
+            if (null != lp) {
+                return lp.shadowKey;
+            }
+            return null;
+        }
+
+        @Override
+        public float[] getChildRounds(@NonNull ViewGroup parent, @NonNull View child) {
+            // 此方法返回子视图的圆角
+            LayoutParams lp = (LayoutParams) child.getLayoutParams();
+            if (null != lp) {
+                return lp.roundRadius;
+            }
+            return null;
+        }
+
+        @NonNull
+        @Override
+        protected Object copyKey(@NonNull Object key) {
+            // 最好复写这个方法，用于复制阴影的key对象，默认直接返回原对象
+            return ((ShadowKey) key).clone();
+        }
+    };
+```
+其中，copyKey方法不是必须，但最好去复写它，然后返回一个key的副本，如果采用ShadowKey，可以直接调用clone方法即可。
+
+*已取消clipShadow属性，此属性不再生效*
 
 # 联系信息
 ```
