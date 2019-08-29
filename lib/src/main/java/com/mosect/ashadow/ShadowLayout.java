@@ -15,6 +15,9 @@ import android.widget.FrameLayout;
 
 import com.mosect.viewutils.MeasureUtils;
 
+/**
+ * 阴影布局，其子视图可以设置阴影
+ */
 public class ShadowLayout extends FrameLayout {
 
     private Rect layoutContainer = new Rect();

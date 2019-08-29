@@ -3,10 +3,12 @@ Android阴影控件库
 
 ## 使用
 ```
-implementation 'com.mosect.AShadow:1.0.4'
+implementation 'com.mosect.AShadow:1.0.5'
 ```
 
 ## 更新记录
+### 1.0.5
+* 增加ShadowLinearLayout和ShadowRelativeLayout
 ### 1.0.4
 * 增加FastShadow，用于快速渲染阴影（渲染速度极大提升）
 * ShadowLayout改用FastShadow
@@ -62,7 +64,7 @@ implementation 'com.mosect.AShadow:1.0.4'
 阴影占用空间 | ShadowLayout.LayoutParams.spaceShadow | app:layout_spaceShadow | boolean
 
 ## 说明：
-放到ShadowLayout中的视图都可以设置阴影，默认阴影半径和偏移量会影响其位置。可以通过设置spaceShadow控制阴影是否影响视图位置。
+放到ShadowLayout中的视图都可以设置阴影，默认阴影半径和偏移量会影响其位置。可以通过设置spaceShadow（**ShadowLinearLayout和ShadowRelativeLayout不支持**）控制阴影是否影响视图位置。
 
 增加FastShadow，用于快速渲染子视图，**不再需要关闭硬件加速**。复写ViewGroup的drawChild方法，并调用FastShadow的drawChild方法：
 ```

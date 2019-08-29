@@ -27,6 +27,19 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, ShadowLayoutActivity.class));
             }
         });
+        findViewById(R.id.btn_sll).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, ShadowLinearLayoutActivity.class));
+            }
+        });
+        findViewById(R.id.btn_srl).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, ShadowRelativeLayoutActivity.class));
+            }
+        });
+
         RecyclerView rvContent = findViewById(R.id.rv_content);
         GridLayoutManager glm = new GridLayoutManager(this, 2);
         rvContent.setLayoutManager(glm);

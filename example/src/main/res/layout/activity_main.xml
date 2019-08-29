@@ -11,6 +11,20 @@
         android:text="ShadowLayout"
         android:textAllCaps="false" />
 
+    <Button
+        android:id="@+id/btn_sll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ShadowLinearLayout"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btn_srl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ShadowRelativeLayout"
+        android:textAllCaps="false" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_content"
         android:layout_width="match_parent"
