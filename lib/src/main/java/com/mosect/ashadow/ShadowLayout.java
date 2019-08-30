@@ -57,7 +57,7 @@ public class ShadowLayout extends FrameLayout {
             @Override
             protected Object getChildShadowKey(@NonNull ViewGroup parent, @NonNull View child) {
                 LayoutParams lp = (LayoutParams) child.getLayoutParams();
-                if (null != lp) {
+                if (null != lp && lp.shadowInfo.getShadowRadius() > 0) {
                     return lp.shadowKey;
                 }
                 return null;

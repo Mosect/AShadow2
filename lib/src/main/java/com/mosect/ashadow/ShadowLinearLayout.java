@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -51,7 +52,7 @@ public class ShadowLinearLayout extends LinearLayout {
             @Override
             protected Object getChildShadowKey(@NonNull ViewGroup parent, @NonNull View child) {
                 LayoutParams lp = (LayoutParams) child.getLayoutParams();
-                if (null != lp) {
+                if (null != lp && lp.shadowInfo.getShadowRadius() > 0) {
                     return lp.shadowKey;
                 }
                 return null;
@@ -70,6 +71,14 @@ public class ShadowLinearLayout extends LinearLayout {
             @Override
             protected Object copyKey(@NonNull Object key) {
                 return ((ShadowKey) key).clone();
+            }
+
+            @Override
+            protected void getChildBounds(@NonNull ViewGroup parent, @NonNull View child, @NonNull RectF out) {
+                out.left = child.getLeft();
+                out.top = child.getTop();
+                out.right = out.left + child.getMeasuredWidth();
+                out.bottom = out.top + child.getMeasuredHeight();
             }
         };
     }
@@ -102,6 +111,22 @@ public class ShadowLinearLayout extends LinearLayout {
     @Override
     protected LayoutParams generateDefaultLayoutParams() {
         return new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        for (int i = 0; i < getChildCount(); i++) {
+            View child = getChildAt(i);
+            if (child.getVisibility() == GONE) continue;
+            LayoutParams lp = (LayoutParams) child.getLayoutParams();
+            int width = child.getMeasuredWidth();
+            int height = child.getMeasuredHeight();
+            if (!lp.shadowKey.equals(width, height, lp.shadowInfo, lp.roundRadius)) {
+                // 阴影发生更改
+                lp.shadowKey.set(width, height, lp.shadowInfo, lp.roundRadius);
+            }
+        }
     }
 
     public static class LayoutParams extends LinearLayout.LayoutParams {

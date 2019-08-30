@@ -82,6 +82,8 @@ public class ShadowKey implements Cloneable {
                 shadowX == shadowInfo.getShadowX() &&
                 shadowY == shadowInfo.getShadowY() &&
                 solidColor == shadowInfo.getSolidColor() &&
-                Arrays.equals(this.roundRadius, roundRadius);
+                Arrays.equals(this.roundRadius, roundRadius) &&
+                this.width == width &&
+                this.height == height;
     }
 }

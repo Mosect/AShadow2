@@ -3,10 +3,13 @@ Android阴影控件库
 
 ## 使用
 ```
-implementation 'com.mosect.AShadow:1.0.5'
+implementation 'com.mosect.AShadow:1.0.8'
 ```
 
 ## 更新记录
+### 1.0.8
+* 修复ShadowLinearLayout和ShadowRelativeLayout渲染位置不对的问题
+* 修复ShadowKey比对方法
 ### 1.0.5
 * 增加ShadowLinearLayout和ShadowRelativeLayout
 ### 1.0.4

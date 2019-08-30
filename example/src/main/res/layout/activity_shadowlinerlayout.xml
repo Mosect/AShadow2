@@ -28,4 +28,12 @@
         app:layout_shadowRadius="10dp"
         app:layout_solidColor="#ffffff" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/app_name"
+        android:textColor="#b6b6b6" />
+
 </com.mosect.ashadow.ShadowLinearLayout>
