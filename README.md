@@ -1,6 +1,12 @@
 # AShadow2
 Android阴影控件库
 
+![AShadow2](img/01.jpg)
+
+![AShadow2](img/02.jpg)
+
+![AShadow2](img/03.jpg)
+
 ## 使用
 ```
 implementation 'com.mosect.AShadow:2.0.0'
@@ -290,22 +296,6 @@ RoundShadow的工厂类
 阴影辅助工具类，帮组视图更好的绘制阴影。
 ```
 package com.mosect.ashadow;
-
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.NinePatch;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PorterDuff;
-import android.graphics.Rect;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.view.View;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 /**
  * 阴影辅助器

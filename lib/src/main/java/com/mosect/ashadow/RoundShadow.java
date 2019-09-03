@@ -172,7 +172,7 @@ public class RoundShadow extends Shadow {
         }
 
         /**
-         * 检查阴影参数是否游戏
+         * 检查阴影参数是否有效
          */
         public void check() {
             if (null != radii && radii.length != 8) {
