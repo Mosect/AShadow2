@@ -6,8 +6,8 @@ publish {
     userOrg = 'mosect' // bintray.com用户名
     groupId = 'com.mosect' // jcenter上的路径,bintray上创建Package时填写的Version control项
     artifactId = 'AShadow' // 项目名称，bintray上创建Package时填写的Name项
-    publishVersion = '1.0.8' // 版本号
-    desc = '修复ShadowLinearLayout、ShadowRelativeLayout阴影渲染位置不对问题' // 描述，不重要
+    publishVersion = '2.0.0' // 版本号
+    desc = 'AShadow2' // 描述，不重要
     website = 'http://www.mosect.com' // 网站，最好有，不重要
 }
 

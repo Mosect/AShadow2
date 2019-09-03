@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -17,84 +16,37 @@ import android.widget.RelativeLayout;
  */
 public class ShadowRelativeLayout extends RelativeLayout {
 
-    private FastShadow priChildShadow;
+    private ShadowHelper shadowHelper = new ShadowHelper();
 
     public ShadowRelativeLayout(Context context) {
         super(context);
     }
 
-    public ShadowRelativeLayout(Context context, AttributeSet attrs) {
+    public ShadowRelativeLayout(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ShadowRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ShadowRelativeLayout(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-    }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        if (null != priChildShadow) {
-            priChildShadow.close();
-        }
-        priChildShadow = new FastShadow() {
-            @Nullable
-            @Override
-            protected ShadowInfo getShadowInfo(@NonNull ViewGroup parent, @NonNull View child) {
-                LayoutParams lp = (LayoutParams) child.getLayoutParams();
-                if (null != lp) {
-                    return lp.shadowInfo;
-                }
-                return null;
-            }
-
-            @Nullable
-            @Override
-            protected Object getChildShadowKey(@NonNull ViewGroup parent, @NonNull View child) {
-                LayoutParams lp = (LayoutParams) child.getLayoutParams();
-                if (null != lp && lp.shadowInfo.getShadowRadius() > 0) {
-                    return lp.shadowKey;
-                }
-                return null;
-            }
-
-            @Override
-            public float[] getChildRounds(@NonNull ViewGroup parent, @NonNull View child) {
-                LayoutParams lp = (LayoutParams) child.getLayoutParams();
-                if (null != lp) {
-                    return lp.roundRadius;
-                }
-                return null;
-            }
-
-            @NonNull
-            @Override
-            protected Object copyKey(@NonNull Object key) {
-                return ((ShadowKey) key).clone();
-            }
-
-            @Override
-            protected void getChildBounds(@NonNull ViewGroup parent, @NonNull View child, @NonNull RectF out) {
-                out.left = child.getLeft();
-                out.top = child.getTop();
-                out.right = out.left + child.getMeasuredWidth();
-                out.bottom = out.top + child.getMeasuredHeight();
-            }
-        };
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (null != priChildShadow) {
-            priChildShadow.close();
-            priChildShadow = null;
+        for (int i = 0; i < getChildCount(); i++) {
+            View child = getChildAt(i);
+            clearChildShadow(child);
         }
     }
 
     @Override
     protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
-        priChildShadow.drawChild(canvas, this, child);
+        if (child.getVisibility() == VISIBLE) {
+            LayoutParams lp = (LayoutParams) child.getLayoutParams();
+            if (null != lp.shadow) {
+                shadowHelper.drawChildShadow(canvas, child, lp.shadow, lp.shadowX, lp.shadowY);
+            }
+        }
         return super.drawChild(canvas, child, drawingTime);
     }
 
@@ -120,12 +72,25 @@ public class ShadowRelativeLayout extends RelativeLayout {
             View child = getChildAt(i);
             if (child.getVisibility() == GONE) continue;
             LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            int width = child.getMeasuredWidth();
-            int height = child.getMeasuredHeight();
-            if (!lp.shadowKey.equals(width, height, lp.shadowInfo, lp.roundRadius)) {
-                // 阴影发生更改
-                lp.shadowKey.set(width, height, lp.shadowInfo, lp.roundRadius);
+            if (null == lp.shadow) {
+                lp.shadow = ShadowHelper.createShadow(lp.shadowKey);
+            } else if (!lp.shadowKey.equals(lp.shadow.getKey())) {
+                ShadowManager.getDefault().unbind(lp.shadow);
+                lp.shadow = ShadowHelper.createShadow(lp.shadowKey);
             }
+        }
+    }
+
+    @Override
+    public void onViewRemoved(View child) {
+        super.onViewRemoved(child);
+        clearChildShadow(child);
+    }
+
+    private void clearChildShadow(View child) {
+        LayoutParams lp = (LayoutParams) child.getLayoutParams();
+        if (null != lp && null != lp.shadow) {
+            ShadowManager.getDefault().unbind(lp.shadow);
         }
     }
 
@@ -134,73 +99,63 @@ public class ShadowRelativeLayout extends RelativeLayout {
         /**
          * 阴影信息
          */
-        public final ShadowInfo shadowInfo = new ShadowInfo();
+        private final RoundShadow.Key shadowKey = new RoundShadow.Key();
         /**
-         * 圆角
+         * 阴影X轴偏移量
          */
-        private float[] roundRadius;
-        ShadowKey shadowKey;
+        public float shadowX;
+        /**
+         * 阴影Y轴偏移量
+         */
+        public float shadowY;
+        Shadow shadow;
 
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
             TypedArray ta = c.obtainStyledAttributes(attrs, R.styleable.ShadowRelativeLayout_Layout);
-            shadowInfo.setShadowX(ta.getDimension(R.styleable.ShadowRelativeLayout_Layout_layout_shadowX, 0f));
-            shadowInfo.setShadowY(ta.getDimension(R.styleable.ShadowRelativeLayout_Layout_layout_shadowY, 0f));
-            shadowInfo.setShadowRadius(ta.getDimension(R.styleable.ShadowRelativeLayout_Layout_layout_shadowRadius, 0f));
-            shadowInfo.setShadowColor(ta.getColor(R.styleable.ShadowRelativeLayout_Layout_layout_shadowColor, Color.BLACK));
+            shadowX = ta.getDimension(R.styleable.ShadowRelativeLayout_Layout_layout_shadowX, 0f);
+            shadowY = ta.getDimension(R.styleable.ShadowRelativeLayout_Layout_layout_shadowY, 0f);
+            shadowKey.shadowRadius = ta.getDimension(R.styleable.ShadowRelativeLayout_Layout_layout_shadowRadius, 0f);
+            shadowKey.shadowColor = ta.getColor(R.styleable.ShadowRelativeLayout_Layout_layout_shadowColor, Color.BLACK);
             float round = ta.getDimension(R.styleable.ShadowRelativeLayout_Layout_layout_roundRadius, 0f);
             float roundLT = ta.getDimension(R.styleable.ShadowRelativeLayout_Layout_layout_roundRadiusLT, round);
             float roundRT = ta.getDimension(R.styleable.ShadowRelativeLayout_Layout_layout_roundRadiusRT, round);
             float roundRB = ta.getDimension(R.styleable.ShadowRelativeLayout_Layout_layout_roundRadiusRB, round);
             float roundLB = ta.getDimension(R.styleable.ShadowRelativeLayout_Layout_layout_roundRadiusLB, round);
             if (roundLT > 0 || roundRT > 0 || roundRB > 0 || roundLB > 0) {
-                roundRadius = new float[]{
+                shadowKey.radii = new float[]{
                         roundLT, roundLT,
                         roundRT, roundRT,
                         roundRB, roundRB,
                         roundLB, roundLB,
                 };
+            } else {
+                shadowKey.radii = null;
             }
-            shadowInfo.setSolidColor(ta.getColor(R.styleable.ShadowRelativeLayout_Layout_layout_solidColor, Color.BLACK));
+            shadowKey.solidColor = ta.getColor(R.styleable.ShadowRelativeLayout_Layout_layout_solidColor, Color.BLACK);
+            shadowKey.noSolid = ta.getBoolean(R.styleable.ShadowRelativeLayout_Layout_layout_noSolid, false);
             ta.recycle();
-            init();
         }
 
         public LayoutParams(int width, int height) {
             super(width, height);
-            init();
         }
 
         public LayoutParams(ViewGroup.LayoutParams p) {
             super(p);
-            init();
         }
 
         public LayoutParams(MarginLayoutParams source) {
             super(source);
-            init();
         }
 
         public LayoutParams(RelativeLayout.LayoutParams source) {
             super(source);
-            init();
         }
 
-        @Nullable
-        public float[] getRoundRadius() {
-            return roundRadius;
-        }
-
-        public void setRoundRadius(@Nullable float[] roundRadius) {
-            if (null != roundRadius && roundRadius.length != 8) {
-                throw new IllegalArgumentException("round radius length must be 8");
-            }
-            this.roundRadius = roundRadius;
-        }
-
-        private void init() {
-            shadowKey = new ShadowKey();
-            shadowKey.set(0, 0, shadowInfo, roundRadius);
+        @NonNull
+        public RoundShadow.Key getShadowKey() {
+            return shadowKey;
         }
     }
 }

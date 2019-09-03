@@ -2,6 +2,7 @@ package com.mosect.ashadow.example;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,9 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.mosect.ashadow.ShadowInfo;
+import com.mosect.ashadow.RoundShadow;
 
 public class MainActivity extends AppCompatActivity {
+
+    private ItemShadow itemShadow;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,7 +69,17 @@ public class MainActivity extends AppCompatActivity {
         // 间距
         rvContent.addItemDecoration(new GridSpacingItemDecoration(2, spacing, true));
         // 添加阴影
-        rvContent.addItemDecoration(new ItemShadow());
+        itemShadow = new ItemShadow();
+        rvContent.addItemDecoration(itemShadow);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (null != itemShadow) {
+            itemShadow.close();
+            itemShadow = null;
+        }
     }
 
     class ItemHolder extends RecyclerView.ViewHolder {
@@ -83,33 +96,29 @@ public class MainActivity extends AppCompatActivity {
 
     class ItemShadow extends ShadowItemDecoration {
 
-        private ShadowInfo shadowInfo; // 阴影信息
-        private float[] rounds; // item圆角
+        private RoundShadow.Key shadowKey;
 
         ItemShadow() {
-            shadowInfo = new ShadowInfo();
-            shadowInfo.setSolidColor(Color.BLACK);
-            shadowInfo.setSolidColor(Color.WHITE);
-            shadowInfo.setShadowRadius(TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, 6, getResources().getDisplayMetrics())
-            );
+            shadowKey = new RoundShadow.Key();
+            shadowKey.shadowColor = Color.parseColor("#0d000000");
+            shadowKey.solidColor = Color.WHITE;
+            shadowKey.shadowRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                    6, getResources().getDisplayMetrics());
             float round = TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
-            rounds = new float[]{
+            shadowKey.radii = new float[]{
                     round, round, round, round, round, round, round, round
             };
         }
 
-        @Nullable
         @Override
-        protected ShadowInfo getShadowInfo(@NonNull RecyclerView parent, @NonNull View child) {
-            return shadowInfo;
+        protected void getShadowInfo(@NonNull RecyclerView parent, @NonNull View child, @NonNull ShadowInfo out) {
+            out.key = shadowKey;
         }
 
-        @Nullable
         @Override
-        protected float[] getChildRounds(@NonNull RecyclerView parent, @NonNull View child) {
-            return rounds;
+        protected void getShadowRect(@NonNull RecyclerView parent, @NonNull View child, @NonNull Rect out) {
+            out.set(child.getLeft(), child.getTop(), child.getRight(), child.getBottom());
         }
     }
 }

@@ -11,8 +11,8 @@
         <attr name="layout_roundRadiusRB" format="dimension|reference" />
         <attr name="layout_roundRadiusLB" format="dimension|reference" />
         <attr name="layout_solidColor" format="color|reference" />
-        <attr name="layout_clipShadow" format="boolean|reference" />
         <attr name="layout_spaceShadow" format="boolean|reference" />
+        <attr name="layout_noSolid" format="boolean|reference" />
     </declare-styleable>
     <declare-styleable name="ShadowLinearLayout_Layout">
         <attr name="layout_shadowX" />
@@ -25,6 +25,7 @@
         <attr name="layout_roundRadiusRB" />
         <attr name="layout_roundRadiusLB" />
         <attr name="layout_solidColor" />
+        <attr name="layout_noSolid" />
     </declare-styleable>
     <declare-styleable name="ShadowRelativeLayout_Layout">
         <attr name="layout_shadowX" />
@@ -37,5 +38,6 @@
         <attr name="layout_roundRadiusRB" />
         <attr name="layout_roundRadiusLB" />
         <attr name="layout_solidColor" />
+        <attr name="layout_noSolid" />
     </declare-styleable>
 </resources>
