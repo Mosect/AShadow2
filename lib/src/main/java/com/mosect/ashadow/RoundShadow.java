@@ -99,23 +99,29 @@ public class RoundShadow extends Shadow {
 
     @Override
     protected void onDestroy() {
-        if (null != bitmap) {
-            if (!bitmap.isRecycled()) {
-                bitmap.recycle();
+        synchronized (this) {
+            if (null != bitmap) {
+                if (!bitmap.isRecycled()) {
+                    bitmap.recycle();
+                }
+                bitmap = null;
             }
-            bitmap = null;
+            ninePatch = null;
         }
-        ninePatch = null;
     }
 
     @Override
     public void draw(@NonNull Canvas canvas, @NonNull Rect rect, @Nullable Paint paint) {
-        // 外部传来的矩形对应阴影的矩形，因此实际绘制的位置应该加上阴影半径
-        drawRect.left = (int) (rect.left - this.rect.left);
-        drawRect.top = (int) (rect.top - this.rect.top);
-        drawRect.right = (int) (rect.right + (bitmap.getWidth() - this.rect.right));
-        drawRect.bottom = (int) (rect.bottom + (bitmap.getHeight() - this.rect.bottom));
-        ninePatch.draw(canvas, drawRect, paint);
+        synchronized (this) {
+            // 外部传来的矩形对应阴影的矩形，因此实际绘制的位置应该加上阴影半径
+            if (null != ninePatch && null != bitmap && !bitmap.isRecycled()) {
+                drawRect.left = (int) (rect.left - this.rect.left);
+                drawRect.top = (int) (rect.top - this.rect.top);
+                drawRect.right = (int) (rect.right + (bitmap.getWidth() - this.rect.right));
+                drawRect.bottom = (int) (rect.bottom + (bitmap.getHeight() - this.rect.bottom));
+                ninePatch.draw(canvas, drawRect, paint);
+            }
+        }
     }
 
     @NonNull

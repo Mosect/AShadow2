@@ -10,8 +10,12 @@ Android阴影控件库
 
 ## 使用
 ```
-implementation 'com.mosect.AShadow:2.0.0'
+implementation 'com.mosect.AShadow:2.0.1'
 ```
+
+## 更新记录
+### 2.0.1
+* 修复RoundShadow.draw方法空指针异常
 
 ## XML示例
 ```
