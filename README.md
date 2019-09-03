@@ -1,5 +1,6 @@
 # AShadow2
 Android阴影控件库
+旧版：[AShadow1](https://github.com/Mosect/AShadow/tree/AShadow1)，维护中，但不添加新功能。
 
 ![AShadow2](img/01.jpg)
 
