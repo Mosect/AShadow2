@@ -14,6 +14,11 @@ implementation 'com.mosect.AShadow:2.0.1'
 ```
 
 ## 更新记录
+
+### 2.0.2
+* 优化阴影释放，不再需要手动释放阴影
+* Shadow.unbind和ShadowManager.unbind方法已过时
+
 ### 2.0.1
 * 修复RoundShadow.draw方法空指针异常
 

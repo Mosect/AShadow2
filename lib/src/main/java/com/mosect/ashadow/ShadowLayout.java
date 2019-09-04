@@ -83,10 +83,12 @@ public class ShadowLayout extends FrameLayout {
             if (width > contentWidth) contentWidth = width;
             if (height > contentHeight) contentHeight = height;
             if (null == lp.shadow) {
-                lp.shadow = ShadowHelper.createShadow(lp.shadowKey);
+                // lp.shadow = ShadowHelper.createShadow(lp.shadowKey);
+                lp.shadow = ShadowHelper.getShadow(lp.shadowKey);
             } else if (!lp.shadowKey.equals(lp.shadow.getKey())) {
-                ShadowManager.getDefault().unbind(lp.shadow);
-                lp.shadow = ShadowHelper.createShadow(lp.shadowKey);
+                // ShadowManager.getDefault().unbind(lp.shadow);
+                // lp.shadow = ShadowHelper.createShadow(lp.shadowKey);
+                lp.shadow = ShadowHelper.getShadow(lp.shadowKey);
             }
         }
         int width = MeasureUtils.getMeasuredDimension(contentWidth, widthMeasureSpec);
@@ -141,7 +143,8 @@ public class ShadowLayout extends FrameLayout {
     private void clearChildShadow(View child) {
         LayoutParams lp = (LayoutParams) child.getLayoutParams();
         if (null != lp && null != lp.shadow) {
-            ShadowManager.getDefault().unbind(lp.shadow);
+            // ShadowManager.getDefault().unbind(lp.shadow);
+            lp.shadow = null;
         }
     }
 

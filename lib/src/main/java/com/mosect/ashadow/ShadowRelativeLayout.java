@@ -73,10 +73,12 @@ public class ShadowRelativeLayout extends RelativeLayout {
             if (child.getVisibility() == GONE) continue;
             LayoutParams lp = (LayoutParams) child.getLayoutParams();
             if (null == lp.shadow) {
-                lp.shadow = ShadowHelper.createShadow(lp.shadowKey);
+                // lp.shadow = ShadowHelper.createShadow(lp.shadowKey);
+                lp.shadow = ShadowHelper.getShadow(lp.shadowKey);
             } else if (!lp.shadowKey.equals(lp.shadow.getKey())) {
-                ShadowManager.getDefault().unbind(lp.shadow);
-                lp.shadow = ShadowHelper.createShadow(lp.shadowKey);
+                // ShadowManager.getDefault().unbind(lp.shadow);
+                // lp.shadow = ShadowHelper.createShadow(lp.shadowKey);
+                lp.shadow = ShadowHelper.getShadow(lp.shadowKey);
             }
         }
     }
@@ -90,7 +92,8 @@ public class ShadowRelativeLayout extends RelativeLayout {
     private void clearChildShadow(View child) {
         LayoutParams lp = (LayoutParams) child.getLayoutParams();
         if (null != lp && null != lp.shadow) {
-            ShadowManager.getDefault().unbind(lp.shadow);
+            // ShadowManager.getDefault().unbind(lp.shadow);
+            lp.shadow = null;
         }
     }
 

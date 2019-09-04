@@ -6,8 +6,8 @@ publish {
     userOrg = 'mosect' // bintray.com用户名
     groupId = 'com.mosect' // jcenter上的路径,bintray上创建Package时填写的Version control项
     artifactId = 'AShadow' // 项目名称，bintray上创建Package时填写的Name项
-    publishVersion = '2.0.1' // 版本号
-    desc = '修复RoundShadow.draw方法空指针异常' // 描述，不重要
+    publishVersion = '2.0.2' // 版本号
+    desc = '优化阴影释放，不再需要手动释放阴影' // 描述，不重要
     website = 'http://www.mosect.com' // 网站，最好有，不重要
 }
 
@@ -46,5 +46,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation 'com.mosect:ViewUtils:1.0.6'
+    implementation 'com.mosect:ViewUtils:1.0.7'
 }

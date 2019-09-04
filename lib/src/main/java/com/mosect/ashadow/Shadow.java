@@ -16,6 +16,8 @@ public abstract class Shadow {
 
     /**
      * 如果有地方引用此对象，需要调用此方法
+     *
+     * @deprecated 已过时，不用主动绑定
      */
     public void bind() {
         synchronized (this) {
@@ -25,6 +27,8 @@ public abstract class Shadow {
 
     /**
      * 如果不需要引用此对象，调用此方法
+     *
+     * @deprecated 已过时，不用主动释放对象
      */
     public void unbind() {
         synchronized (this) {
@@ -41,6 +45,7 @@ public abstract class Shadow {
      * 判断此阴影对象是否被引用
      *
      * @return true，被引用
+     * @deprecated 已失效，主要对象存在，就可用
      */
     public boolean isUsed() {
         return usedCount > 0;

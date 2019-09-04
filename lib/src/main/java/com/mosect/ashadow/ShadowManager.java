@@ -2,8 +2,10 @@ package com.mosect.ashadow;
 
 import android.support.annotation.NonNull;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -26,11 +28,46 @@ public class ShadowManager {
     }
 
     private List<ShadowFactory> factories;
-    private HashMap<Object, Shadow> shadowMap;
+    private Map<Object, Shadow> shadowMap;
+    private Map<Object, WeakReference<Shadow>> weakShadowMap;
 
     public ShadowManager() {
         factories = new CopyOnWriteArrayList<>();
         factories.add(new RoundShadowFactory());
+        weakShadowMap = new HashMap<>();
+    }
+
+    /**
+     * 获取阴影对象
+     *
+     * @param key 阴影key
+     * @return 阴影对象
+     * @throws UnsupportedKeyException 不支持的阴影key
+     */
+    public Shadow get(@NonNull Object key) throws UnsupportedKeyException {
+        WeakReference<Shadow> weak = weakShadowMap.get(key);
+        if (null != weak) {
+            Shadow shadow = weak.get();
+            if (null == shadow) {
+                return createShadow(key);
+            }
+            return shadow;
+        } else {
+            return createShadow(key);
+        }
+    }
+
+    private Shadow createShadow(Object key) {
+        for (ShadowFactory factory : factories) {
+            if (factory.supportKey(key)) {
+                Shadow shadow = factory.create(key);
+                Object copyKey = factory.copyKey(key);
+                WeakReference<Shadow> weak = new WeakReference<>(shadow);
+                weakShadowMap.put(copyKey, weak);
+                return shadow;
+            }
+        }
+        return null;
     }
 
     /**
@@ -39,6 +76,7 @@ public class ShadowManager {
      * @param key 阴影key
      * @return 阴影对象
      * @throws UnsupportedKeyException 不支持的阴影key
+     * @deprecated 已过时，请改用{@link #get(Object) get}方法
      */
     public Shadow bind(@NonNull Object key) throws UnsupportedKeyException {
         if (null != shadowMap) {
@@ -65,10 +103,11 @@ public class ShadowManager {
      *
      * @param shadow 阴影对象
      * @return true，解绑成功
+     * @deprecated 已过时，不用主动去释放阴影对象
      */
     public boolean unbind(@NonNull Shadow shadow) {
         Object key = shadow.getKey();
-        if (null != key) {
+        if (null != shadowMap && null != key) {
             Shadow temp = shadowMap.get(key);
             if (temp == shadow) {
                 shadow.unbind();

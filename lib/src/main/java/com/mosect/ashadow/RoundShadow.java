@@ -130,6 +130,13 @@ public class RoundShadow extends Shadow {
         return (Key) super.getKey();
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        System.out.println("RoundShadow:finalize");
+        onDestroy();
+    }
+
     /**
      * 圆角矩形阴影的key，可以用来创建阴影对象和比较阴影对象是否一样
      */

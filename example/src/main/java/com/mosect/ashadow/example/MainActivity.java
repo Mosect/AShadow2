@@ -82,6 +82,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        System.gc();
+    }
+
     class ItemHolder extends RecyclerView.ViewHolder {
 
         TextView tvTitle;

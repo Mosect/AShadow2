@@ -41,7 +41,7 @@ public abstract class ShadowItemDecoration
                 }
                 if (null == shadow) {
                     try {
-                        shadow = ShadowManager.getDefault().bind(shadowInfo.key);
+                        shadow = ShadowManager.getDefault().get(shadowInfo.key);
                         if (null == shadowMap) {
                             shadowMap = new HashMap<>();
                         }
@@ -68,9 +68,9 @@ public abstract class ShadowItemDecoration
     @Override
     public void close() {
         if (null != shadowMap) {
-            for (Shadow shadow : shadowMap.values()) {
+            /*for (Shadow shadow : shadowMap.values()) {
                 ShadowManager.getDefault().unbind(shadow);
-            }
+            }*/
             shadowMap = null;
         }
     }

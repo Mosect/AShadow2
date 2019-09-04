@@ -109,8 +109,9 @@ public class ShadowHelper {
      * {@link ShadowManager#unbind(Shadow) ShadowManager.unbind}方法，
      * 也可以自行调用{@link Shadow#unbind() Shadow.unbind}方法（不推荐，shadow对象不会被回收，
      * 只是释放了shadow内部需要释放的对象，shadow对象会被ShadowManager缓存）
+     * @deprecated 已过时，改用{@link #getShadow(Object) getShadow}方法
      */
-    public static Shadow createShadow(Object key) {
+    public static Shadow createShadow(@NonNull Object key) {
         try {
             return ShadowManager.getDefault().bind(key);
         } catch (Exception e) {
@@ -127,6 +128,21 @@ public class ShadowHelper {
      */
     public static boolean destroyShadow(@NonNull Shadow shadow) {
         return ShadowManager.getDefault().unbind(shadow);
+    }
+
+    /**
+     * 获取阴影对象
+     *
+     * @param key 阴影key
+     * @return 阴影对象
+     */
+    public static Shadow getShadow(@NonNull Object key) {
+        try {
+            return ShadowManager.getDefault().get(key);
+        } catch (Exception e) {
+            // e.printStackTrace();
+            return null;
+        }
     }
 
     private Rect childRect = new Rect();
