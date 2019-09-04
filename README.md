@@ -10,10 +10,13 @@ Android阴影控件库
 
 ## 使用
 ```
-implementation 'com.mosect.AShadow:2.0.1'
+implementation 'com.mosect.AShadow:2.0.3'
 ```
 
 ## 更新记录
+
+### 2.0.3
+* 修复无法预览阴影视图问题（只能预览填充色，阴影效果不支持）
 
 ### 2.0.2
 * 优化阴影释放，不再需要手动释放阴影
