@@ -6,7 +6,7 @@ publish {
     userOrg = 'mosect' // bintray.com用户名
     groupId = 'com.mosect' // jcenter上的路径,bintray上创建Package时填写的Version control项
     artifactId = 'AShadow' // 项目名称，bintray上创建Package时填写的Name项
-    publishVersion = '2.0.3' // 版本号
+    publishVersion = '2.0.4' // 版本号
     desc = '修复无法预览阴影视图问题' // 描述，不重要
     website = 'http://www.mosect.com' // 网站，最好有，不重要
 }

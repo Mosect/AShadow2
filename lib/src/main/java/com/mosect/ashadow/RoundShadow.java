@@ -136,7 +136,13 @@ public class RoundShadow extends Shadow {
                     drawRect.top = (int) (rect.top - this.rect.top);
                     drawRect.right = (int) (rect.right + (bitmap.getWidth() - this.rect.right));
                     drawRect.bottom = (int) (rect.bottom + (bitmap.getHeight() - this.rect.bottom));
-                    ninePatch.draw(canvas, drawRect, paint);
+                    try {
+                        ninePatch.draw(canvas, drawRect, paint);
+                    } catch (Exception e) {
+                        // 不支持.9
+                        unsupportedMode = new UnsupportedMode(getKey());
+                        unsupportedMode.draw(canvas, rect, paint);
+                    }
                 }
             }
         }
