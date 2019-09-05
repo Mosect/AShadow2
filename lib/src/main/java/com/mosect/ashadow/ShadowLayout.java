@@ -82,13 +82,14 @@ public class ShadowLayout extends FrameLayout {
             int height = child.getMeasuredHeight() + vmar;
             if (width > contentWidth) contentWidth = width;
             if (height > contentHeight) contentHeight = height;
+            Object key = lp.getShadowKey(isInEditMode());
             if (null == lp.shadow) {
                 // lp.shadow = ShadowHelper.createShadow(lp.shadowKey);
-                lp.shadow = ShadowHelper.getShadow(lp.shadowKey);
-            } else if (!lp.shadowKey.equals(lp.shadow.getKey())) {
+                lp.shadow = ShadowHelper.getShadow(key);
+            } else if (!key.equals(lp.shadow.getKey())) {
                 // ShadowManager.getDefault().unbind(lp.shadow);
                 // lp.shadow = ShadowHelper.createShadow(lp.shadowKey);
-                lp.shadow = ShadowHelper.getShadow(lp.shadowKey);
+                lp.shadow = ShadowHelper.getShadow(key);
             }
         }
         int width = MeasureUtils.getMeasuredDimension(contentWidth, widthMeasureSpec);
@@ -154,6 +155,7 @@ public class ShadowLayout extends FrameLayout {
          * 阴影信息
          */
         private final RoundShadow.Key shadowKey = new RoundShadow.Key();
+        UnsupportedRoundShadow.Key editModeShadowKey;
         /**
          * 阴影X轴偏移量
          */
@@ -218,6 +220,16 @@ public class ShadowLayout extends FrameLayout {
 
         @NonNull
         public RoundShadow.Key getShadowKey() {
+            return shadowKey;
+        }
+
+        Object getShadowKey(boolean editMode) {
+            if (editMode) {
+                if (null == editModeShadowKey)
+                    editModeShadowKey = new UnsupportedRoundShadow.Key();
+                editModeShadowKey.set(shadowKey);
+                return editModeShadowKey;
+            }
             return shadowKey;
         }
     }

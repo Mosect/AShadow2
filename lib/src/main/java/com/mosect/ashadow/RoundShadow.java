@@ -25,16 +25,12 @@ public class RoundShadow extends Shadow {
     private NinePatch ninePatch; // 点9图对象，防止缩放
     private RectF rect; // 阴影矩形的位置和大小
     private Rect drawRect; // 画图时需要的矩形对象
-    /**
-     * 不支持模式，视图预览时是不支持阴影，为了防止不显示预览效果，需要增加不支持模式
-     */
-    private UnsupportedMode unsupportedMode;
 
     public RoundShadow(@NonNull Key key) {
         key.check();
         this.key = key.clone();
         int minCornerSize = (int) key.shadowRadius; // 最小的角大小
-        if (null == key.radii) { // 没有圆角
+        if (!key.hasRound()) { // 没有圆角
             // 计算阴影效果图的大小：
             // 可缩放部分大小（FIXED_SIZE）+角大小（minCornerSize）*2+阴影大小（shadowRadius）*2
             int width = (int) (FIXED_SIZE + key.shadowRadius * 2 + minCornerSize * 2);
@@ -51,19 +47,15 @@ public class RoundShadow extends Shadow {
             // 创建位图，用于缓存阴影效果
             bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             // 在bitmap上绘制阴影效果
-            try {
-                ShadowHelper.draw(bitmap, path, key.solidColor,
-                        key.shadowRadius, key.shadowColor, key.noSolid);
-                // 计算.9图片缩放位置
-                int x1 = (int) (rect.left + minCornerSize);
-                int x2 = (int) (rect.right - minCornerSize);
-                int y1 = (int) (rect.top + minCornerSize);
-                int y2 = (int) (rect.bottom - minCornerSize);
-                // 创建.9缩放对象
-                ninePatch = ShadowHelper.createNinePatch(bitmap, x1, x2, y1, y2);
-            } catch (Exception e) {
-                unsupportedMode = new UnsupportedMode(key);
-            }
+            ShadowHelper.draw(bitmap, path, key.solidColor,
+                    key.shadowRadius, key.shadowColor, key.noSolid);
+            // 计算.9图片缩放位置
+            int x1 = (int) (rect.left + minCornerSize);
+            int x2 = (int) (rect.right - minCornerSize);
+            int y1 = (int) (rect.top + minCornerSize);
+            int y2 = (int) (rect.bottom - minCornerSize);
+            // 创建.9缩放对象
+            ninePatch = ShadowHelper.createNinePatch(bitmap, x1, x2, y1, y2);
         } else { // 带有圆角
             // 计算左边部分大小
             float ls = Math.max(key.radii[0], key.radii[6]);
@@ -94,19 +86,15 @@ public class RoundShadow extends Shadow {
             // 创建位图，用于缓存阴影效果
             bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             // 在bitmap上绘制阴影效果
-            try {
-                ShadowHelper.draw(bitmap, path, key.solidColor,
-                        key.shadowRadius, key.shadowColor, key.noSolid);
-                // 计算.9图片缩放位置
-                int x1 = (int) (rect.left + ls);
-                int x2 = (int) (rect.right - rs);
-                int y1 = (int) (rect.top + ts);
-                int y2 = (int) (rect.bottom - bs);
-                // 创建.9缩放对象
-                ninePatch = ShadowHelper.createNinePatch(bitmap, x1, x2, y1, y2);
-            } catch (Exception e) {
-                unsupportedMode = new UnsupportedMode(key);
-            }
+            ShadowHelper.draw(bitmap, path, key.solidColor,
+                    key.shadowRadius, key.shadowColor, key.noSolid);
+            // 计算.9图片缩放位置
+            int x1 = (int) (rect.left + ls);
+            int x2 = (int) (rect.right - rs);
+            int y1 = (int) (rect.top + ts);
+            int y2 = (int) (rect.bottom - bs);
+            // 创建.9缩放对象
+            ninePatch = ShadowHelper.createNinePatch(bitmap, x1, x2, y1, y2);
         }
         drawRect = new Rect();
     }
@@ -127,23 +115,13 @@ public class RoundShadow extends Shadow {
     @Override
     public void draw(@NonNull Canvas canvas, @NonNull Rect rect, @Nullable Paint paint) {
         synchronized (this) {
-            if (null != unsupportedMode) {
-                unsupportedMode.draw(canvas, rect, paint);
-            } else {
-                // 外部传来的矩形对应阴影的矩形，因此实际绘制的位置应该加上阴影半径
-                if (null != ninePatch && null != bitmap && !bitmap.isRecycled()) {
-                    drawRect.left = (int) (rect.left - this.rect.left);
-                    drawRect.top = (int) (rect.top - this.rect.top);
-                    drawRect.right = (int) (rect.right + (bitmap.getWidth() - this.rect.right));
-                    drawRect.bottom = (int) (rect.bottom + (bitmap.getHeight() - this.rect.bottom));
-                    try {
-                        ninePatch.draw(canvas, drawRect, paint);
-                    } catch (Exception e) {
-                        // 不支持.9
-                        unsupportedMode = new UnsupportedMode(getKey());
-                        unsupportedMode.draw(canvas, rect, paint);
-                    }
-                }
+            // 外部传来的矩形对应阴影的矩形，因此实际绘制的位置应该加上阴影半径
+            if (null != ninePatch && null != bitmap && !bitmap.isRecycled()) {
+                drawRect.left = (int) (rect.left - this.rect.left);
+                drawRect.top = (int) (rect.top - this.rect.top);
+                drawRect.right = (int) (rect.right + (bitmap.getWidth() - this.rect.right));
+                drawRect.bottom = (int) (rect.bottom + (bitmap.getHeight() - this.rect.bottom));
+                ninePatch.draw(canvas, drawRect, paint);
             }
         }
     }
@@ -159,40 +137,6 @@ public class RoundShadow extends Shadow {
         super.finalize();
         System.out.println("RoundShadow:finalize");
         onDestroy();
-    }
-
-    private static class UnsupportedMode {
-
-        private Paint paint;
-        private Key key;
-        private Path path;
-        private RectF pathRect;
-
-        UnsupportedMode(Key key) {
-            this.key = key;
-            this.paint = new Paint();
-            this.path = new Path();
-            this.pathRect = new RectF();
-        }
-
-        void draw(@NonNull Canvas canvas, @NonNull Rect rect, @Nullable Paint paint) {
-            this.paint.reset();
-            if (null != paint) {
-                this.paint.set(paint);
-            }
-            this.paint.setColor(key.noSolid ? Color.TRANSPARENT : key.solidColor);
-            this.paint.setStyle(Paint.Style.FILL);
-            this.paint.setAntiAlias(true);
-
-            path.reset();
-            pathRect.set(rect);
-            if (null == key.radii) {
-                path.addRect(pathRect, Path.Direction.CW);
-            } else {
-                path.addRoundRect(pathRect, key.radii, Path.Direction.CW);
-            }
-            canvas.drawPath(path, this.paint);
-        }
     }
 
     /**
@@ -249,6 +193,13 @@ public class RoundShadow extends Shadow {
             if (null != radii && radii.length != 8) {
                 throw new IllegalArgumentException("radii must be null or length is 8!");
             }
+            if (null != radii) {
+                for (float v : radii) {
+                    if (v < 0f) {
+                        throw new IllegalArgumentException("Invalid radii value:" + v);
+                    }
+                }
+            }
             if (shadowRadius <= 0) {
                 throw new IllegalArgumentException("shadowRadius must more than 0!");
             }
@@ -256,6 +207,22 @@ public class RoundShadow extends Shadow {
             if (alpha != 0xFF) {
                 throw new IllegalArgumentException("solidColor has alpha!");
             }
+        }
+
+        /**
+         * 判断是否含有圆角
+         *
+         * @return true，含有圆角
+         */
+        public boolean hasRound() {
+            if (null != radii) {
+                for (float v : radii) {
+                    if (v > 0f) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 }

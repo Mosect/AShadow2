@@ -49,4 +49,15 @@
         app:layout_shadowRadius="10dp"
         app:layout_solidColor="#ff00ff"
         app:layout_spaceShadow="false" />
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="120dp"
+        app:layout_roundRadius="0dp"
+        app:layout_shadowColor="#000000"
+        app:layout_shadowRadius="5dp"
+        app:layout_solidColor="#000000"
+        app:layout_spaceShadow="false" />
 </com.mosect.ashadow.ShadowLayout>

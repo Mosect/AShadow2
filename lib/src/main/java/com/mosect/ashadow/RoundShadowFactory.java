@@ -27,6 +27,9 @@ public class RoundShadowFactory implements ShadowFactory {
         if (!supportKey(key)) {
             throw new UnsupportedKeyException("Key:" + key);
         }
+        if (key instanceof UnsupportedRoundShadow.Key) {
+            return new UnsupportedRoundShadow((UnsupportedRoundShadow.Key) key);
+        }
         return new RoundShadow((RoundShadow.Key) key);
     }
 }
