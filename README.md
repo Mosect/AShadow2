@@ -70,10 +70,9 @@ implementation 'com.mosect.AShadow:2.0.5'
 放到ShadowLayout中的视图都可以设置阴影，默认阴影半径和偏移量会影响其位置。可以通过设置spaceShadow（**ShadowLinearLayout和ShadowRelativeLayout不支持**）控制阴影是否影响视图位置。
 
 ## 自定义实现阴影或使用
-* 可以通过ShadowManager.bind方法获取一个阴影
+* 可以通过ShadowManager.get方法获取一个阴影
 * 如果有额外实现的阴影，需要在ShadowManager中添加ShadowFactory（阴影工厂）
-* 不在使用Shadow对象时需要去释放阴影对象
-* 释放阴影最好调用ShadowManager.unbind方法，自己调用Shadow.unbind方法，shadow对象本身不会被释放
+* Shadow对象不在需要手动释放
 
 ### Shadow（阴影）
 Shadow，表示一种阴影，抽象类，需要去实现draw和onDestroy方法；调用Shadow.draw方法可以在画布的某个区域画出阴影效果。创建一个阴影对象需要key对象，key对象包含实现此种阴影所需的信息，通过Shadow.getKey方法可以获取阴影对象的key。
@@ -83,41 +82,6 @@ Shadow，表示一种阴影，抽象类，需要去实现draw和onDestroy方法�
  */
 public abstract class Shadow {
 
-    private int usedCount;
-    protected Object key;
-
-    /**
-     * 如果有地方引用此对象，需要调用此方法
-     */
-    public void bind() {
-        synchronized (this) {
-            usedCount++;
-        }
-    }
-
-    /**
-     * 如果不需要引用此对象，调用此方法
-     */
-    public void unbind() {
-        synchronized (this) {
-            if (usedCount > 0) {
-                usedCount--;
-            }
-            if (usedCount == 0) {
-                onDestroy();
-            }
-        }
-    }
-
-    /**
-     * 判断此阴影对象是否被引用
-     *
-     * @return true，被引用
-     */
-    public boolean isUsed() {
-        return usedCount > 0;
-    }
-
     /**
      * 获取阴影key
      *
@@ -126,11 +90,6 @@ public abstract class Shadow {
     public Object getKey() {
         return key;
     }
-
-    /**
-     * 释放阴影对象
-     */
-    protected abstract void onDestroy();
 
     /**
      * 将阴影对象画在画布上
@@ -167,7 +126,7 @@ public class ShadowManager {
      * @return 阴影对象
      * @throws UnsupportedKeyException 不支持的阴影key
      */
-    public Shadow bind(@NonNull Object key) throws UnsupportedKeyException {
+    public Shadow get(@NonNull Object key) throws UnsupportedKeyException {
     }
 
     /**
@@ -258,49 +217,28 @@ public interface ShadowFactory {
          */
         @Override
         public Key clone() {
-            try {
-                return (Key) super.clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
         }
 
         @Override
         public int hashCode() {
-            return shadowColor + solidColor +
-                    Float.floatToIntBits(shadowRadius) +
-                    Arrays.hashCode(radii) +
-                    (noSolid ? 1 : 0);
         }
 
         @Override
         public boolean equals(@Nullable Object obj) {
-            if (obj == this) return true;
-            if (obj instanceof Key) {
-                Key other = (Key) obj;
-                return shadowColor == other.shadowColor &&
-                        shadowRadius == other.shadowRadius &&
-                        solidColor == other.solidColor &&
-                        Arrays.equals(radii, other.radii) &&
-                        noSolid == other.noSolid;
-            }
-            return false;
         }
 
         /**
-         * 检查阴影参数是否有效
+         * 检查阴影参数是否有效，无效抛异常
          */
         public void check() {
-            if (null != radii && radii.length != 8) {
-                throw new IllegalArgumentException("radii must be null or length is 8!");
-            }
-            if (shadowRadius <= 0) {
-                throw new IllegalArgumentException("shadowRadius must more than 0!");
-            }
-            int alpha = Color.alpha(solidColor);
-            if (alpha != 0xFF) {
-                throw new IllegalArgumentException("solidColor has alpha!");
-            }
+        }
+
+        /**
+         * 判断是否含有圆角
+         *
+         * @return true，含有圆角
+         */
+        public boolean hasRound() {
         }
     }
 ```
