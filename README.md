@@ -10,7 +10,7 @@ Android阴影控件库
 
 ## 使用
 ```
-implementation 'com.mosect.AShadow:2.0.5'
+implementation 'com.mosect:AShadow:2.0.5'
 ```
 
 ## 更新记录
