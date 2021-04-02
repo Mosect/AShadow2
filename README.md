@@ -9,6 +9,8 @@ Android阴影控件库
 ![AShadow2](img/03.jpg)
 
 ## 使用
+[![](https://jitpack.io/v/Mosect/AShadow2.svg)](https://jitpack.io/#Mosect/AShadow2)
+
 在项目根节点的build.gradle中配置：
 ```
 allprojects {
