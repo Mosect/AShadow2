@@ -19,7 +19,7 @@ allprojects {
 ```
 在需要引入的项目build.gradle中添加
 ```
-implementation 'com.github.mosect:ViewUtils:1.0.8'
+implementation 'com.github.Mosect:ViewUtils:1.0.8'
 implementation 'com.github.Mosect:AShadow2:2.0.6'
 ```
 
