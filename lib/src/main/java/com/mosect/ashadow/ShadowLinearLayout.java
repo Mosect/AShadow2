@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Rect;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,11 +20,11 @@ public class ShadowLinearLayout extends LinearLayout {
         super(context);
     }
 
-    public ShadowLinearLayout(Context context, @Nullable AttributeSet attrs) {
+    public ShadowLinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ShadowLinearLayout(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ShadowLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
@@ -165,7 +162,7 @@ public class ShadowLinearLayout extends LinearLayout {
             super(source);
         }
 
-        @NonNull
+
         public RoundShadow.Key getShadowKey() {
             return shadowKey;
         }

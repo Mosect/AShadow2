@@ -1,7 +1,5 @@
 package com.mosect.ashadow;
 
-import android.support.annotation.NonNull;
-
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +42,7 @@ public class ShadowManager {
      * @return 阴影对象
      * @throws UnsupportedKeyException 不支持的阴影key
      */
-    public Shadow get(@NonNull Object key) throws UnsupportedKeyException {
+    public Shadow get(Object key) throws UnsupportedKeyException {
         WeakReference<Shadow> weak = weakShadowMap.get(key);
         if (null != weak) {
             Shadow shadow = weak.get();
@@ -78,7 +76,7 @@ public class ShadowManager {
      * @throws UnsupportedKeyException 不支持的阴影key
      * @deprecated 已过时，请改用{@link #get(Object) get}方法
      */
-    public Shadow bind(@NonNull Object key) throws UnsupportedKeyException {
+    public Shadow bind(Object key) throws UnsupportedKeyException {
         if (null != shadowMap) {
             Shadow shadow = shadowMap.get(key);
             if (null != shadow && shadow.isUsed()) {
@@ -105,7 +103,7 @@ public class ShadowManager {
      * @return true，解绑成功
      * @deprecated 已过时，不用主动去释放阴影对象
      */
-    public boolean unbind(@NonNull Shadow shadow) {
+    public boolean unbind(Shadow shadow) {
         Object key = shadow.getKey();
         if (null != shadowMap && null != key) {
             Shadow temp = shadowMap.get(key);
@@ -125,7 +123,7 @@ public class ShadowManager {
      *
      * @param factory 阴影工厂
      */
-    public void addFactory(@NonNull ShadowFactory factory) {
+    public void addFactory(ShadowFactory factory) {
         factories.add(factory);
     }
 
@@ -134,7 +132,7 @@ public class ShadowManager {
      *
      * @param factory 阴影工厂
      */
-    public void removeFactory(@NonNull ShadowFactory factory) {
+    public void removeFactory(ShadowFactory factory) {
         factories.remove(factory);
     }
 }

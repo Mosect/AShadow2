@@ -5,8 +5,6 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -24,15 +22,15 @@ public class ShadowLayout extends FrameLayout {
     private Rect layoutOut = new Rect();
     private ShadowHelper shadowHelper = new ShadowHelper();
 
-    public ShadowLayout(@NonNull Context context) {
+    public ShadowLayout(Context context) {
         super(context);
     }
 
-    public ShadowLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public ShadowLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ShadowLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ShadowLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
@@ -170,7 +168,7 @@ public class ShadowLayout extends FrameLayout {
         public boolean spaceShadow = true;
         Shadow shadow;
 
-        public LayoutParams(@NonNull Context c, @Nullable AttributeSet attrs) {
+        public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
             TypedArray ta = c.obtainStyledAttributes(attrs, R.styleable.ShadowLayout_Layout);
             shadowX = ta.getDimension(R.styleable.ShadowLayout_Layout_layout_shadowX, 0f);
@@ -206,19 +204,19 @@ public class ShadowLayout extends FrameLayout {
             super(width, height, gravity);
         }
 
-        public LayoutParams(@NonNull ViewGroup.LayoutParams source) {
+        public LayoutParams(ViewGroup.LayoutParams source) {
             super(source);
         }
 
-        public LayoutParams(@NonNull ViewGroup.MarginLayoutParams source) {
+        public LayoutParams(ViewGroup.MarginLayoutParams source) {
             super(source);
         }
 
-        public LayoutParams(@NonNull FrameLayout.LayoutParams source) {
+        public LayoutParams(FrameLayout.LayoutParams source) {
             super(source);
         }
 
-        @NonNull
+
         public RoundShadow.Key getShadowKey() {
             return shadowKey;
         }

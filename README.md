@@ -9,11 +9,24 @@ Android阴影控件库
 ![AShadow2](img/03.jpg)
 
 ## 使用
+在项目根节点的build.gradle中配置：
 ```
-implementation 'com.mosect:AShadow:2.0.5'
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+在需要引入的项目build.gradle中添加
+```
+implementation 'com.github.mosect:ViewUtils:1.0.8'
+implementation 'com.github.Mosect:AShadow2:2.0.6'
 ```
 
 ## 更新记录
+
+### 2.0.6
+* 弃用jcenter,更改成jitpack
 
 ### 2.0.5
 * 修复部分开发工具无法预览问题（阴影效果无法预览，只能预览填充颜色效果）

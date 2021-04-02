@@ -6,8 +6,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 public class UnsupportedRoundShadow extends Shadow {
 
@@ -16,7 +14,7 @@ public class UnsupportedRoundShadow extends Shadow {
     private Path path;
     private RectF pathRect;
 
-    public UnsupportedRoundShadow(@NonNull Key key) {
+    public UnsupportedRoundShadow(Key key) {
         key.check();
         this.key = key.clone();
         this.paint = new Paint();
@@ -29,7 +27,7 @@ public class UnsupportedRoundShadow extends Shadow {
     }
 
     @Override
-    public void draw(@NonNull Canvas canvas, @NonNull Rect rect, @Nullable Paint paint) {
+    public void draw(Canvas canvas, Rect rect, Paint paint) {
         this.paint.reset();
         if (null != paint) {
             this.paint.set(paint);
@@ -55,7 +53,7 @@ public class UnsupportedRoundShadow extends Shadow {
             return (Key) super.clone();
         }
 
-        public void set(@NonNull RoundShadow.Key src) {
+        public void set(RoundShadow.Key src) {
             this.solidColor = src.solidColor;
             this.shadowRadius = src.shadowRadius;
             this.shadowColor = src.shadowColor;

@@ -3,8 +3,6 @@ package com.mosect.ashadow;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 /**
  * 表示一种阴影
@@ -72,5 +70,5 @@ public abstract class Shadow {
      * @param rect   位置和大小
      * @param paint  额外画笔
      */
-    public abstract void draw(@NonNull Canvas canvas, @NonNull Rect rect, @Nullable Paint paint);
+    public abstract void draw(Canvas canvas, Rect rect, Paint paint);
 }

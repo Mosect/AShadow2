@@ -1,19 +1,8 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
-
-publish {
-    repoName = 'android' // 远程仓库名字,不指明，默认是上传到maven
-    userOrg = 'mosect' // bintray.com用户名
-    groupId = 'com.mosect' // jcenter上的路径,bintray上创建Package时填写的Version control项
-    artifactId = 'AShadow' // 项目名称，bintray上创建Package时填写的Name项
-    publishVersion = '2.0.5' // 版本号
-    desc = '修复部分开发工具无法预览问题' // 描述，不重要
-    website = 'http://www.mosect.com' // 网站，最好有，不重要
-}
+apply plugin: 'maven-publish'
 
 android {
     compileSdkVersion 28
-
 
 
     defaultConfig {
@@ -42,9 +31,36 @@ tasks.withType(Javadoc).all {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'com.android.support:appcompat-v7:28.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation 'com.mosect:ViewUtils:1.0.7'
+    implementation 'com.github.Mosect:ViewUtils:1.0.8'
+}
+
+// Because the components are created only during the afterEvaluate phase, you must
+// configure your publications using the afterEvaluate() lifecycle method.
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                // Applies the component for the release build variant.
+                from components.release
+
+                // You can then customize attributes of the publication as shown below.
+                groupId = 'com.github.mosect'
+                artifactId = 'AShadow2'
+                version = '2.0.6'
+            }
+            // Creates a Maven publication called “debug”.
+            debug(MavenPublication) {
+                // Applies the component for the debug build variant.
+                from components.debug
+
+                groupId = 'com.github.mosect'
+                artifactId = 'AShadow2'
+                version = '2.0.6'
+            }
+        }
+    }
 }

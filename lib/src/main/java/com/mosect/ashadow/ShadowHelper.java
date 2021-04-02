@@ -9,8 +9,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.View;
 
 import java.nio.ByteBuffer;
@@ -111,7 +109,7 @@ public class ShadowHelper {
      * 只是释放了shadow内部需要释放的对象，shadow对象会被ShadowManager缓存）
      * @deprecated 已过时，改用{@link #getShadow(Object) getShadow}方法
      */
-    public static Shadow createShadow(@NonNull Object key) {
+    public static Shadow createShadow(Object key) {
         try {
             return ShadowManager.getDefault().bind(key);
         } catch (Exception e) {
@@ -126,7 +124,7 @@ public class ShadowHelper {
      * @param shadow 阴影对象
      * @return true，释放成功
      */
-    public static boolean destroyShadow(@NonNull Shadow shadow) {
+    public static boolean destroyShadow(Shadow shadow) {
         return ShadowManager.getDefault().unbind(shadow);
     }
 
@@ -136,7 +134,7 @@ public class ShadowHelper {
      * @param key 阴影key
      * @return 阴影对象
      */
-    public static Shadow getShadow(@NonNull Object key) {
+    public static Shadow getShadow(Object key) {
         try {
             return ShadowManager.getDefault().get(key);
         } catch (Exception e) {
@@ -157,11 +155,11 @@ public class ShadowHelper {
      * @param paint  画笔
      */
     public void drawShadow(
-            @NonNull Canvas canvas,
-            @NonNull Rect rect,
-            @NonNull Shadow shadow,
-            @Nullable Matrix matrix,
-            @Nullable Paint paint) {
+            Canvas canvas,
+            Rect rect,
+            Shadow shadow,
+            Matrix matrix,
+            Paint paint) {
         if (null == matrix) {
             shadow.draw(canvas, rect, paint);
         } else {
@@ -190,9 +188,9 @@ public class ShadowHelper {
      * @param shadowY 阴影偏移量：Y
      */
     public void drawChildShadow(
-            @NonNull Canvas canvas,
-            @NonNull View child,
-            @NonNull Shadow shadow,
+            Canvas canvas,
+            View child,
+            Shadow shadow,
             float shadowX,
             float shadowY) {
         childRect.set(child.getLeft(), child.getTop(), child.getRight(), child.getBottom());

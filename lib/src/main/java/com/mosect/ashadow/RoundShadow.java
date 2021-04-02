@@ -8,8 +8,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -26,7 +24,7 @@ public class RoundShadow extends Shadow {
     private RectF rect; // 阴影矩形的位置和大小
     private Rect drawRect; // 画图时需要的矩形对象
 
-    public RoundShadow(@NonNull Key key) {
+    public RoundShadow(Key key) {
         key.check();
         this.key = key.clone();
         int minCornerSize = (int) key.shadowRadius; // 最小的角大小
@@ -113,7 +111,7 @@ public class RoundShadow extends Shadow {
     }
 
     @Override
-    public void draw(@NonNull Canvas canvas, @NonNull Rect rect, @Nullable Paint paint) {
+    public void draw(Canvas canvas, Rect rect, Paint paint) {
         synchronized (this) {
             // 外部传来的矩形对应阴影的矩形，因此实际绘制的位置应该加上阴影半径
             if (null != ninePatch && null != bitmap && !bitmap.isRecycled()) {
@@ -126,7 +124,6 @@ public class RoundShadow extends Shadow {
         }
     }
 
-    @NonNull
     @Override
     public Key getKey() {
         return (Key) super.getKey();
@@ -173,7 +170,7 @@ public class RoundShadow extends Shadow {
         }
 
         @Override
-        public boolean equals(@Nullable Object obj) {
+        public boolean equals(Object obj) {
             if (obj == this) return true;
             if (obj instanceof Key) {
                 Key other = (Key) obj;
